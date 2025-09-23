@@ -1,0 +1,55 @@
+# https://taskfile.dev/
+version: 3
+
+tasks:
+  build:
+    cmds:
+      - docker compose up --build -d
+  up:
+    cmds:
+      - docker compose up -d
+  down:
+    cmds:
+      - docker compose down
+  down-v:
+    cmds:
+      - docker compose down --remove-orphans --volumes
+  restart:
+    cmds:
+      - task: down
+      - task: up
+  destroy:
+    cmds:
+      - docker compose down --rmi all --volumes --remove-orphans
+
+  dump-autoload:
+    cmd: docker compose exec php composer dump-autoload
+  csf:
+    cmd: docker compose exec php ./vendor/bin/php-cs-fixer fix
+  bash:
+    cmd: docker compose exec php bash
+
+  php:
+    cmd: docker compose exec php {{.c}}
+  composer:
+    cmd: docker compose exec php composer {{.c}}
+
+  install:
+    cmds:
+      - task: prepare-env
+      - task: build
+      - docker compose exec php composer create-project laravel/laravel .
+      - docker compose exec php chmod -R 775 storage
+      - docker compose exec php chmod -R 775 bootstrap/cache
+      - docker compose exec php php artisan key:generate
+      - docker compose exec php php artisan storage:link
+      - task: permissions
+
+  permissions:
+    cmds:
+      - 'sudo chown $USER:$USER app'
+  prepare-env:
+    cmd: 'cp .env.example .env'
+
+  default:
+    - task: up

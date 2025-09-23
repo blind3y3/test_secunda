@@ -1,0 +1,50 @@
+services:
+  nginx:
+    container_name: app_nginx
+    build:
+      context: ./docker
+      dockerfile: nginx/Dockerfile
+    volumes:
+      - ./app:/app
+    depends_on:
+      - php
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    volumes:
+      - ./app:/app
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.4.6
+    environment:
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    ports:
+      - "33061:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: on-failure
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge
