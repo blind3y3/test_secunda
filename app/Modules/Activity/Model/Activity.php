@@ -31,13 +31,26 @@ class Activity extends Model
         return $this->hasMany(Activity::class, 'parent_id');
     }
 
-    public function getAllDescendantIds(): array
+    /**
+     * Получить все ID потомков (включая текущий узел) с ограничением глубины
+     *
+     * Уровни вложенности:
+     * - $maxDepth = 0 → только текущий узел (1 уровень)
+     * - $maxDepth = 1 → текущий + дети (2 уровня)
+     * - $maxDepth = 2 → текущий + дети + внуки (3 уровня)
+     */
+    public function getAllDescendantIds(int $maxDepth = 2, int $currentDepth = 0): array
     {
+        if ($currentDepth > $maxDepth) {
+            return [];
+        }
+
         $ids = [$this->id];
 
         foreach ($this->children as $child) {
-            $ids = array_merge($child->getAllDescendantIds(), $ids);
+            $ids = array_merge($child->getAllDescendantIds($maxDepth, $currentDepth + 1), $ids);
         }
+
         return $ids;
     }
 }
