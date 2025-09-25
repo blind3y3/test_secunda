@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $name
  */
-class OrganizationListResource extends JsonResource
+class OrganizationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

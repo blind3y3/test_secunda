@@ -6,7 +6,7 @@ namespace Modules\Api\Resource\Building;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Api\Resource\Organization\OrganizationListResource;
+use Modules\Api\Resource\Organization\OrganizationResource;
 
 /**
  * @property int $id
@@ -23,7 +23,7 @@ class BuildingListResource extends JsonResource
             'address'       => $this->address,
             'latitude'      => $this->latitude,
             'longitude'     => $this->longitude,
-            'organizations' => OrganizationListResource::collection($this->whenLoaded('organizations')),
+            'organizations' => OrganizationResource::collection($this->whenLoaded('organizations')),
         ];
     }
 }
