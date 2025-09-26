@@ -12,10 +12,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(
+        $this->call([
             ActivitySeeder::class,
             BuildingNearestCoordsSeeder::class,
-        );
+        ]);
 
         Building::factory()
             ->count(10)
