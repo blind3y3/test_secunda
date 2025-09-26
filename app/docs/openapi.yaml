@@ -381,6 +381,14 @@ components:
         number:
           type: string
       type: object
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-KEY
+      in: header
+security:
+  -
+    apiKey: []
 tags:
   -
     name: Buildings
