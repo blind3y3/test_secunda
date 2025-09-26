@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  title: API
+  description: 'API для тестового задания'
+  version: '1.0'
+servers:
+  -
+    url: 'http://localhost:8080'
+    description: 'API server'
+paths:
+  /api/buildings/search-in-radius:
+    get:
+      tags:
+        - Buildings
+      summary: 'Список зданий, которые находятся в заданном радиусе'
+      operationId: 37524e53d1abb7f11593d5593bbeb1ca
+      parameters:
+        -
+          name: latitude
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: longitude
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: radius
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список зданий с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/BuildingListResource' } } }, type: object }
+  /api/buildings/search-in-square:
+    get:
+      tags:
+        - Buildings
+      summary: 'Список зданий, которые находятся в заданной прямоугольной области'
+      operationId: e2dc3c5ccbd6390eb57b9b93c6d52b8d
+      parameters:
+        -
+          name: latMin
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: latMax
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: lngMin
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: lngMax
+          in: query
+          required: true
+          schema:
+            type: number
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список зданий с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/BuildingListResource' } } }, type: object }
+  /api/organizations/search-by-address:
+    get:
+      tags:
+        - Organizations
+      summary: 'Список всех организаций, находящихся в конкретном здании'
+      operationId: d5c6f6b9e6f74fc14bc7abba7b4dc8b9
+      parameters:
+        -
+          name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список организаций с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/OrganizationResource' } } }, type: object }
+  /api/organizations/search-by-activity:
+    get:
+      tags:
+        - Organizations
+      summary: 'Список всех организаций, которые относятся к указанному виду деятельности'
+      operationId: 8182a3517109a5292b812d38e20b635f
+      parameters:
+        -
+          name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список организаций с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/OrganizationResource' } } }, type: object }
+  /api/organizations/search-by-activity-group:
+    get:
+      tags:
+        - Organizations
+      summary: 'Поиск организаций по основному и дочерним (при наличии) видам деятельности'
+      operationId: 7f98ef9f420a0e4e3448eddf34f8cb15
+      parameters:
+        -
+          name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список организаций с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/OrganizationResource' } } }, type: object }
+  '/api/organizations/{id}':
+    get:
+      tags:
+        - Organizations
+      summary: 'Вывод информации об организации по её идентификатору'
+      operationId: 753208f1cb1f4095ce1347da67096fa0
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Возвращает найденную организацию'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationResource'
+        '404':
+          description: 'Организация не найдена'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /api/organizations/search-by-name:
+    get:
+      tags:
+        - Organizations
+      summary: 'Поиск организации по названию'
+      operationId: a48edda4708021a6da6189045507f9e3
+      parameters:
+        -
+          name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Список организаций с пагинацией'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/PaginatedResponse' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/OrganizationResource' } } }, type: object }
+components:
+  schemas:
+    NotFoundResponse:
+      title: 'Not Found'
+      properties:
+        message:
+          type: string
+          nullable: false
+        file:
+          type: string
+          nullable: false
+        line:
+          type: integer
+          nullable: false
+      type: object
+    PaginatedResponse:
+      title: 'Paginated response'
+      properties:
+        data:
+          type: array
+          items: {  }
+        links:
+          properties:
+            first:
+              type: string
+              nullable: true
+            last:
+              type: string
+              nullable: true
+            prev:
+              type: string
+              nullable: true
+            next:
+              type: string
+              nullable: true
+          type: object
+        meta:
+          properties:
+            current_page:
+              type: integer
+            from:
+              type: integer
+              nullable: true
+            last_page:
+              type: integer
+            path:
+              type: string
+            per_page:
+              type: integer
+            to:
+              type: integer
+              nullable: true
+            total:
+              type: integer
+            links:
+              properties:
+                url:
+                  type: string
+                  nullable: true
+                label:
+                  type: string
+                  nullable: false
+                page:
+                  type: integer
+                  nullable: true
+                active:
+                  type: boolean
+                  nullable: false
+              type: object
+          type: object
+      type: object
+    ActivityResource:
+      title: Activity
+      properties:
+        name:
+          type: string
+      type: object
+    BuildingListResource:
+      title: Building
+      properties:
+        id:
+          type: integer
+        address:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationForBuildingResource'
+      type: object
+    BuildingResource:
+      title: Building
+      properties:
+        id:
+          type: integer
+        address:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+      type: object
+    OrganizationForBuildingResource:
+      title: 'Organization for building'
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneResource'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityResource'
+      type: object
+    OrganizationResource:
+      title: Organization
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        building:
+          $ref: '#/components/schemas/BuildingResource'
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneResource'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityResource'
+      type: object
+    PhoneResource:
+      title: Phone
+      properties:
+        number:
+          type: string
+      type: object
+tags:
+  -
+    name: Buildings
+    description: Buildings
+  -
+    name: Organizations
+    description: Organizations

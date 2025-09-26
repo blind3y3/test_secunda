@@ -18,7 +18,10 @@ class BuildingService implements BuildingServiceInterface
      */
     public function searchInRadius(GeoSearchDto $dto, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
     {
-        $query = Building::with('organizations')
+        $query = Building::query()
+            ->withWhereHas('organizations', function ($query) {
+                $query->with(['phones', 'activities']);
+            })
             ->select('buildings.*')
             ->selectRaw(
                 <<<SQL
@@ -45,7 +48,10 @@ class BuildingService implements BuildingServiceInterface
 
     public function searchInSquare(SquareSearchDto $dto, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
     {
-        $query = Building::with('organizations')
+        $query = Building::query()
+            ->withWhereHas('organizations', function ($query) {
+                $query->with(['phones', 'activities']);
+            })
             ->whereBetween('latitude', [$dto->getLatMin(), $dto->getLatMax()])
             ->whereBetween('longitude', [$dto->getLngMin(), $dto->getLngMax()]);
 

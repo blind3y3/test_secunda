@@ -11,14 +11,9 @@ use Modules\Organization\Model\Organization;
 
 class OrganizationService implements OrganizationServiceInterface
 {
-    public function getAll(int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
-    {
-        return Organization::query()->paginate($perPage);
-    }
-
     public function getByAddress(string $address, int $perPage = 20): LengthAwarePaginator
     {
-        $organizations = Organization::query()
+        $organizations = Organization::with(['building', 'phones', 'activities'])
             ->select('organizations.*')
             ->join('buildings', 'organizations.building_id', '=', 'buildings.id')
             ->whereLike('buildings.address', sprintf('%%%s%%', $address));
@@ -28,7 +23,7 @@ class OrganizationService implements OrganizationServiceInterface
 
     public function getByActivity(string $activity, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
     {
-        $organizations = Organization::query()
+        $organizations = Organization::with(['building', 'phones', 'activities'])
             ->select('organizations.*')
             ->join('activity_organization', 'organizations.id', '=', 'activity_organization.organization_id')
             ->join('activities', 'activity_organization.activity_id', '=', 'activities.id')
@@ -39,7 +34,7 @@ class OrganizationService implements OrganizationServiceInterface
 
     public function getByActivityIds(array $ids, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
     {
-        $organizations = Organization::query()
+        $organizations = Organization::with(['building', 'phones', 'activities'])
             ->select('organizations.*', 'activity_organization.activity_id')
             ->join('activity_organization', 'organizations.id', '=', 'activity_organization.organization_id')
             ->whereIn('activity_organization.activity_id', $ids);
@@ -52,11 +47,18 @@ class OrganizationService implements OrganizationServiceInterface
      */
     public function getById(int $id): Organization
     {
-        return Organization::query()->find($id) ?? throw new OrganizationNotFoundException();
+        return Organization::query()->where('id', $id)
+            ->with([
+                'building',
+                'phones',
+                'activities',
+            ])->first() ?? throw new OrganizationNotFoundException();
     }
 
     public function getByName(string $name, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator
     {
-        return Organization::query()->whereLike('name', sprintf('%%%s%%', $name))->paginate($perPage);
+        return Organization::with(['building', 'phones', 'activities'])
+            ->whereLike('name', sprintf('%%%s%%', $name))
+            ->paginate($perPage);
     }
 }

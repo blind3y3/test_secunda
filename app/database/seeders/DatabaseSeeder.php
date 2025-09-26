@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         );
 
         Building::factory()
-            ->count(5)
+            ->count(10)
             ->has(Organization::factory()->count(10))
             ->create();
     }

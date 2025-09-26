@@ -6,23 +6,17 @@ namespace Modules\Api\Resource\Building;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Api\Resource\Organization\OrganizationForBuildingResource;
 use OpenApi\Attributes as OA;
 
 
 #[OA\Schema(
-    schema: 'BuildingListResource',
+    schema: 'BuildingResource',
     title: 'Building',
     properties: [
         new OA\Property(property: 'id', type: 'integer'),
         new OA\Property(property: 'address', type: 'string'),
         new OA\Property(property: 'latitude', type: 'float'),
         new OA\Property(property: 'longitude', type: 'float'),
-        new OA\Property(
-            property: 'organizations',
-            type: 'array',
-            items: new OA\Items(ref: '#/components/schemas/OrganizationForBuildingResource'),
-        ),
     ],
     type: 'object'
 )]
@@ -32,16 +26,15 @@ use OpenApi\Attributes as OA;
  * @property float $latitude
  * @property float $longitude
  */
-class BuildingListResource extends JsonResource
+class BuildingResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->id,
-            'address'       => $this->address,
-            'latitude'      => $this->latitude,
-            'longitude'     => $this->longitude,
-            'organizations' => OrganizationForBuildingResource::collection($this->whenLoaded('organizations')),
+            'id'        => $this->id,
+            'address'   => $this->address,
+            'latitude'  => $this->latitude,
+            'longitude' => $this->longitude,
         ];
     }
 }

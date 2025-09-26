@@ -7,30 +7,24 @@ namespace Modules\Api\Resource\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Api\Resource\Activity\ActivityResource;
-use Modules\Api\Resource\Building\BuildingResource;
 use Modules\Api\Resource\Phone\PhoneResource;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'OrganizationResource',
-    title: 'Organization',
+    schema: 'OrganizationForBuildingResource',
+    title: 'Organization for building',
     properties: [
         new OA\Property(property: 'id', type: 'integer'),
         new OA\Property(property: 'name', type: 'string'),
         new OA\Property(
-            property: 'building',
-            ref: '#/components/schemas/BuildingResource',
-            type: 'object',
-        ),
-        new OA\Property(
             property: 'phones',
             type: 'array',
-            items: new OA\Items(ref: '#/components/schemas/PhoneResource')
+            items: new OA\Items(ref: '#/components/schemas/PhoneResource'),
         ),
         new OA\Property(
             property: 'activities',
             type: 'array',
-            items: new OA\Items(ref: '#/components/schemas/ActivityResource')
+            items: new OA\Items(ref: '#/components/schemas/ActivityResource'),
         ),
     ],
     type: 'object'
@@ -39,14 +33,13 @@ use OpenApi\Attributes as OA;
  * @property int $id
  * @property string $name
  */
-class OrganizationResource extends JsonResource
+class OrganizationForBuildingResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id'         => $this->id,
             'name'       => $this->name,
-            'building'   => BuildingResource::make($this->whenLoaded('building')),
             'phones'     => PhoneResource::collection($this->whenLoaded('phones')),
             'activities' => ActivityResource::collection($this->whenLoaded('activities')),
         ];

@@ -8,8 +8,6 @@ use Modules\Organization\Model\Organization;
 
 interface OrganizationServiceInterface
 {
-    public function getAll(int $perPage = 20): LengthAwarePaginator;
-
     public function getByAddress(string $address, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator;
 
     public function getByActivity(string $activity, int $perPage = BaseDataKeeper::PER_PAGE): LengthAwarePaginator;

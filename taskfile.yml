@@ -34,6 +34,10 @@ tasks:
   composer:
     cmd: docker compose exec php composer {{.c}}
 
+  docs:
+    cmd: docker compose exec php php vendor/bin/openapi Modules/ -o docs/openapi.yaml
+    ignore_error: true
+
   install:
     cmds:
       - task: prepare-env
