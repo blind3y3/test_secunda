@@ -24,16 +24,8 @@ tasks:
 
   dump-autoload:
     cmd: docker compose exec php composer dump-autoload
-  csf:
-    cmd: docker compose exec php ./vendor/bin/php-cs-fixer fix
   bash:
     cmd: docker compose exec php bash
-
-  php:
-    cmd: docker compose exec php {{.c}}
-  composer:
-    cmd: docker compose exec php composer {{.c}}
-
   docs:
     cmd: docker compose exec php php vendor/bin/openapi Modules/ -o docs/openapi.yaml
     ignore_error: true
@@ -42,11 +34,13 @@ tasks:
     cmds:
       - task: prepare-env
       - task: build
-      - docker compose exec php composer create-project laravel/laravel .
+      - docker compose exec php cp .env.example .env
+      - docker compose exec php composer install
       - docker compose exec php chmod -R 775 storage
       - docker compose exec php chmod -R 775 bootstrap/cache
       - docker compose exec php php artisan key:generate
       - docker compose exec php php artisan storage:link
+      - docker compose exec php php artisan migrate --seed
       - task: permissions
 
   permissions:
